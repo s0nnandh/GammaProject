@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from pyfcm import FCMNotification
 from .forms import TempForm
 from .models import MessageForm
@@ -24,4 +24,5 @@ def notify(form):
     message_body = form['text']
     result = push_service.notify_single_device(registration_id=registeration_id, message_title=message_title, message_body=message_body)
     print(result)
-
+def null(request):
+    return redirect("home/")
