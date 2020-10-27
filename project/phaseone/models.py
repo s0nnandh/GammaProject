@@ -12,3 +12,4 @@ class MessageForm(models.Model):
     text = models.TextField()
     def __str__(self):
         return self.header
+
