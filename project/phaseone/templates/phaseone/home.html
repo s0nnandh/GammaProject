@@ -9,11 +9,18 @@
 </head> 
 
 <body> 
-	<form method="post" enctype="multipart/form-data"> 
-		{% csrf_token %} 
-		{{form.as_p}} 
-		<button type="submit">Submit</button> 
-	</form> 
+	{% if user.is_authenticated %}
+		<p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+		<form method="post" enctype="multipart/form-data"> 
+			{% csrf_token %} 
+			{{form.as_p}} 
+			<button type="submit">Submit</button> 
+		</form> 
+		<p>goodbye, {{ user.username }}. <a href="/logout"> log out</a>.</p>
+	{% else %}
+  		<p>Welcome, new user. Please <a href="/login"> log in</a>.</p>
+	{% endif %}
+
 </body> 
 
 </html> 
