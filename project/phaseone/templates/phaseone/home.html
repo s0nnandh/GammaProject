@@ -1,26 +1,18 @@
-<!DOCTYPE html> 
-<html lang="en"> 
+{% extends "./layout.html" %}
 
-<head> 
-	<meta charset="UTF-8"> 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-	<meta http-equiv="X-UA-Compatible" content="ie=edge"> 
-	<title>Your Blog</title> 
-</head> 
+{% load crispy_forms_tags %}
 
-<body bgcolor="yellow"> 
+{% block content %}
 	{% if user.is_authenticated %}
 		<p>Welcome, {{ user.username }}. Thanks for logging in.</p>
 		<form method="post" enctype="multipart/form-data"> 
 			{% csrf_token %} 
-			{{form.as_p}} 
-			<button type="submit">Submit</button> 
+			{{ form|crispy }} 
+			<button type="submit" class="btn btn-success">Submit</button> 
 		</form> 
 		<p>goodbye, {{ user.username }}. <a href="/logout"> log out</a>.</p>
 	{% else %}
-  		<p>Welcome, new user. Please <a href="/login"> log in</a>.</p>
+  		<p>Welcome,User. Please <a href="/login"> log in</a>.</p>
 	{% endif %}
 
-</body> 
-
-</html> 
+{% endblock %}

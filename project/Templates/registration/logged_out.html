@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
-<script>
-  document.body.style.backgroundColor = "orange";
-</script>
-  <p>Logged out!</p>  
+<div class="row">
+  <p>Logged out!</p> 
+</div>
+<div class="row"> 
   <a href="/login/">Click here to login again.</a>
+</div>
 {% endblock %}

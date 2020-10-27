@@ -1,15 +1,17 @@
 {% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
 {% block content %}
 <h1>home Page</h1>
 <form action="/home/" method="POST">
     {% csrf_token %}
-    <input type="submit" value="signin">
+    <button type="submit" class="btn btn-success">Signin</button>
 
 </form>
-<br><br>
 <form action="/home/" method="POST">
     {% csrf_token %}
-    <input type="submit" value="signup">
+    <button type="submit" class="btn btn-success">Signup</button>
 
 </form>
 {% endblock %}
