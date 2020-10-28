@@ -24,7 +24,7 @@ def notify(form):
     message_title = form['header']
     print(message_title)
     message_body = form['text']
-    result = push_service.notify_multiple_devices(registration_ids=registeration_id, message_title=message_title, message_body=message_body)
+    result = push_service.notify_multiple_devices(registration_ids=registeration_ids, message_title=message_title, message_body=message_body)
     print(result)
 def null(request):
     return redirect("home/")
