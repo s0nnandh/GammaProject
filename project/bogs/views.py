@@ -5,16 +5,18 @@ from .forms import SimpleForm
 def course(request,ide):
     if not request.user.is_authenticated:
         return redirect('/login')
-    print(ide)
     profname=request.user
-    form = SimpleForm()
-    form.ide=ide
+    form1 = SimpleForm()
+    form2 = SimpleForm()
+    l = []
+    l2=[]
+    grp=Group.objects.get(name=ide)
+
+
+    
     if request.method =='POST': 
         dict=request.POST
         a=dict.getlist('student')
-        print(dict)
-        grp=Group.objects.get(name=ide)
-        print(grp.members.all())
         if 'add' in dict:
             for studentid in a:
                 per=Person.objects.get(userid=studentid)
@@ -24,7 +26,16 @@ def course(request,ide):
                 per=Person.objects.get(userid=studentid)
                 grp.members.remove(per)
 
-    return render(request,'courses.html',{'form':form,'course':ide})
+    a=Person.objects.all()
+    members=grp.members.all()
+    for x in a:
+        if x not in members:
+            l2.append((x.userid,x.name))
+    form2.fields['student'].choices = l2
+    for x in members:
+        l.append((x.userid,x.name))
+    form1.fields['student'].choices = l
+    return render(request,'courses.html',{'form1':form1,'form2':form2,'course':ide})
 
 def home(request):
     if not request.user.is_authenticated:
