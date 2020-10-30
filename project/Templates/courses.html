@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>blog Page</h1>
+<p>Hey, {{ user.username }}. Add or Remove student here .</p>
+<form method="post" enctype="multipart/form-data"> 
+	{% csrf_token %} 
+	{{ form }} 
+	<input type="submit" name="add" value="add" />
+	<input type="submit" name="remove" value="remove" />
+</form> 
+{% endblock %}

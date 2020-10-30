@@ -1,15 +1,21 @@
+
 {% extends 'base.html' %}
 {% block content %}
-<h1>home Page</h1>
-<form action="/home/" method="POST">
-    {% csrf_token %}
-    <input type="submit" value="signin">
+<h1>blog Page</h1>
+<p>Welcome, {{ user.username }}. Your courses list</p>
 
+<ul> 
+{% for athlete in courses %} 
+    <li><a href= "{{ athlete }}"">{{ athlete }}</a></li> 
+{% endfor %} 
+</ul> 
+<br><br><br>
+<h3>create a new course</h3>
+<form method="post" enctype="multipart/form-data">
+	{% csrf_token %} 
+	<input type="text" placeholder="enter team name" name="group_name">
+	<input type="submit" value="create">
 </form>
-<br><br>
-<form action="/home/" method="POST">
-    {% csrf_token %}
-    <input type="submit" value="signup">
-
-</form>
+<br>
+<h4>{{ msg }}</h4>
 {% endblock %}
