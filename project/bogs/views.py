@@ -45,10 +45,13 @@ def home(request):
         dict=request.POST
         grpname=dict['group_name']
         a=Group.objects.filter(prof=request.user).filter(name=grpname).exists()
-        if a :
+        
+        if (a)|(grpname==""):
             msg="course name already exists"
         else:
             Group.objects.create(name=grpname,prof=request.user)
+        if (grpname==""):
+            msg=""
     a=Group.objects.filter(prof=request.user)
-    print(a)
+    
     return render(request,'home.html',{'courses':a,'msg':msg}) 
