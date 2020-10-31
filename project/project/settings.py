@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'phaseone',
     'bogs',
     'crispy_forms',
-        
+    'rest_framework',        
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

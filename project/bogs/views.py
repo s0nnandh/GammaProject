@@ -1,5 +1,12 @@
 from django.shortcuts import render,redirect
 from .models import Person,Group,Membership
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import PersonSerializer
+from rest_framework import generics
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 from .forms import SimpleForm
 def course(request,ide):
@@ -10,7 +17,7 @@ def course(request,ide):
     form2 = SimpleForm()
     l = []
     l2=[]
-    grp=Group.objects.get(name=ide)
+    grp=get_object_or_404(Group, name=ide)
 
 
     
@@ -45,13 +52,19 @@ def home(request):
         dict=request.POST
         grpname=dict['group_name']
         a=Group.objects.filter(prof=request.user).filter(name=grpname).exists()
-        
-        if (a)|(grpname==""):
+        if a :
             msg="course name already exists"
         else:
             Group.objects.create(name=grpname,prof=request.user)
-        if (grpname==""):
-            msg=""
     a=Group.objects.filter(prof=request.user)
-    
+    print(a)
     return render(request,'home.html',{'courses':a,'msg':msg}) 
+
+class PersonList(generics.ListCreateAPIView):
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+
+
+class PersonDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
