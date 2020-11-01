@@ -3,8 +3,10 @@ from pyfcm import FCMNotification
 from .forms import TempForm
 from .models import MessageForm
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def home_view(request):
     form = TempForm(request.POST or None, request.FILES or None)
     if request.method =='POST':     

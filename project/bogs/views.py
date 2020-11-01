@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .serializers import PersonSerializer
 from rest_framework import generics
 from django.shortcuts import get_object_or_404
+from rest_framework import permissions
 
 # Create your views here.
 from .forms import SimpleForm
@@ -61,10 +62,12 @@ def home(request):
     return render(request,'home.html',{'courses':a,'msg':msg}) 
 
 class PersonList(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated,]
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
 
 
 class PersonDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated,]
     queryset = Person.objects.all()
     serializer_class = PersonSerializer

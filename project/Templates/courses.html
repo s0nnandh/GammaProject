@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
 {% block content %}
 <h1>blog Page</h1>
 <p>Hey, {{ user.username }}. Add or Remove student for {{ course }} course.</p>
@@ -6,13 +9,13 @@
     {% csrf_token %} 
     <input type="submit" name="remove" value="remove" />
 <br>
-	{{ form1 }} 
+	{{ form1|crispy }} 
 </form> 
 <br><br>
 <form method="post" enctype="multipart/form-data"> 
     {% csrf_token %} 
     <input type="submit" name="add" value="add" /><br>
-	{{ form2 }} 
+	{{ form2|crispy }} 
 	
 </form> 
 {% endblock %}
