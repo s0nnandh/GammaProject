@@ -7,10 +7,9 @@ from .serializers import PersonSerializer
 from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
-
-# Create your views here.
 from .forms import SimpleForm
-def course(request,ide):
+
+def manage(request,ide):
     if not request.user.is_authenticated:
         return redirect('/login')
     profname=request.user
@@ -43,7 +42,10 @@ def course(request,ide):
     for x in members:
         l.append((x.userid,x.name))
     form1.fields['student'].choices = l
-    return render(request,'courses.html',{'form1':form1,'form2':form2,'course':ide})
+    return render(request,'manage_students.html',{'form1':form1,'form2':form2,'course':ide})
+
+def course(request,ide):
+        return render(request,'courses.html',{ 'course' : ide })
 
 def home(request):
     if not request.user.is_authenticated:
@@ -55,7 +57,7 @@ def home(request):
         a=Group.objects.filter(prof=request.user).filter(name=grpname).exists()
         if a :
             msg="course name already exists"
-        else:
+        elif grpname!="":
             Group.objects.create(name=grpname,prof=request.user)
     a=Group.objects.filter(prof=request.user)
     print(a)

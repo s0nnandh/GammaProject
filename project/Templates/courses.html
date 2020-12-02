@@ -1,21 +1,12 @@
 {% extends 'base.html' %}
 
-{% load crispy_forms_tags %}
 
 {% block content %}
-<h1>blog Page</h1>
-<p>Hey, {{ user.username }}. Add or Remove student for {{ course }} course.</p>
-<form method="post" enctype="multipart/form-data"> 
-    {% csrf_token %} 
-    <input type="submit" name="remove" value="remove" />
-<br>
-	{{ form1|crispy }} 
-</form> 
+<h1>course Page</h1>
+<p>Hey, {{ user.username }}. your {{ course }} main page.</p>
+
 <br><br>
-<form method="post" enctype="multipart/form-data"> 
-    {% csrf_token %} 
-    <input type="submit" name="add" value="add" /><br>
-	{{ form2|crispy }} 
-	
-</form> 
+manage students for {{ course }}
+<a href= "{{ course }}/manage" > here</a> 
+
 {% endblock %}
