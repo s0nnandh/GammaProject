@@ -24,6 +24,7 @@ class Membership(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     invite_reason = models.IntegerField(default=0)
 
+
 class Messageship(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    form = models.ForeignKey(MessageForm, on_delete=models.CASCADE)
+    form2 = models.ForeignKey(MessageForm, on_delete=models.CASCADE)

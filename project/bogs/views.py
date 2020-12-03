@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Person,Group,Membership
+from .models import Person,Group,Membership,MessageForm,TempForm,Messageship
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,6 +8,7 @@ from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from .forms import SimpleForm
+from django.utils import timezone
 
 def manage(request,ide):
     if not request.user.is_authenticated:
@@ -17,12 +18,13 @@ def manage(request,ide):
     form2 = SimpleForm()
     l = []
     l2=[]
-    grp=get_object_or_404(Group, name=ide)
+    grp=get_object_or_404(Group, name=ide,prof=request.user)
 
 
     
     if request.method =='POST': 
         dict=request.POST
+        print(dict)
         a=dict.getlist('student')
         if 'add' in dict:
             for studentid in a:
@@ -45,7 +47,25 @@ def manage(request,ide):
     return render(request,'manage_students.html',{'form1':form1,'form2':form2,'course':ide})
 
 def course(request,ide):
-        return render(request,'courses.html',{ 'course' : ide })
+    
+        grp=get_object_or_404(Group, name=ide,prof=request.user)
+        b=request.POST
+        form = TempForm(request.POST or None, request.FILES or None)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+
+        if request.method =='POST':     
+            if form.is_valid(): 
+                time=timezone.now()
+                MessageForm.objects.create(time=time,header=b['header'],text=b['text'],priority=b['priority'])
+                print(timezone.now())
+                message=MessageForm.objects.get(time=time)
+                Messageship.objects.create(group=grp,form2=message)
+                form = TempForm()      
+        
+        
+        messages = grp.messages.all();
+        
+        return render(request,'courses.html',{ 'course' : ide , 'messages' : messages ,'form':form})
 
 def home(request):
     if not request.user.is_authenticated:

@@ -7,6 +7,6 @@ l = [1,2]
 class SimpleForm(forms.Form):
     student = forms.MultipleChoiceField(
         required=False,
-        widget=forms.SelectMultiple,
+        widget=forms.CheckboxSelectMultiple(),
         choices=l,
     )
