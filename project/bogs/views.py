@@ -3,12 +3,13 @@ from .models import Person,Group,Membership,MessageForm,TempForm,Messageship
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import PersonSerializer
+from .serializers import PersonSerializer,GroupSerializer,MessageSerializer
 from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from .forms import SimpleForm
 from django.utils import timezone
+from phaseone.models import MessageForm 
 
 def manage(request,ide):
     if not request.user.is_authenticated:
@@ -63,7 +64,7 @@ def course(request,ide):
                 form = TempForm()      
         
         
-        messages = grp.messages.all();
+        messages = grp.messages.all()
         
         return render(request,'courses.html',{ 'course' : ide , 'messages' : messages ,'form':form})
 
@@ -94,3 +95,23 @@ class PersonDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated,]
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
+
+class GroupList(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+class MessageList(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    queryset = MessageForm.objects.all()
+    serializer_class = MessageSerializer
+
+class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    queryset = MessageForm.objects.all()
+    serializer_class = MessageSerializer
