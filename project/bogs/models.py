@@ -28,3 +28,11 @@ class Membership(models.Model):
 class Messageship(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     form2 = models.ForeignKey(MessageForm, on_delete=models.CASCADE)
+
+
+'''
+Student and prof - same class extended from django user
+user_type = ['prof', 'stud']
+
+login API endpoint takes 'username', 'password', 'platform'
+'''

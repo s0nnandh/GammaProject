@@ -81,6 +81,7 @@ def home(request):
             Group.objects.create(name=grpname,prof=request.user)
     a=Group.objects.filter(prof=request.user)
     print(a)
+    
     return render(request,'home.html',{'courses':a,'msg':msg}) 
 
 class PersonList(generics.ListCreateAPIView):
