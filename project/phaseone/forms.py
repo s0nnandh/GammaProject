@@ -1,5 +1,5 @@
 from django.forms import ModelForm 
-from .models import MessageForm
+from bogs.models import MessageForm
 
 
 class TempForm(ModelForm):

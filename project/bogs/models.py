@@ -1,6 +1,4 @@
 from django.db import models
-from phaseone.models import MessageForm
-from phaseone.forms import TempForm
 
 class Person(models.Model):
     userid = models.CharField(max_length=128,primary_key=True)
@@ -10,6 +8,21 @@ class Person(models.Model):
     Token_key = models.CharField(max_length=1000)
     def __str__(self):
         return self.name
+
+
+class MessageForm(models.Model):
+    Choices =(
+        ("1","Very Important"),
+        ("2","Important"),
+        ("3","Okay"),
+    )   
+    priority = models.CharField(max_length = 2,choices=Choices)
+    header = models.CharField(max_length = 100)
+    text = models.TextField()
+    time = models.DateTimeField(auto_now=False,primary_key=True)
+    seen = models.ManyToManyField(Person,through='Message_seen')
+    def __str__(self):
+        return self.header
 
 
 class Group(models.Model):
@@ -30,6 +43,11 @@ class Messageship(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     form2 = models.ForeignKey(MessageForm, on_delete=models.CASCADE)
 
+
+
+class Message_seen(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    form2 = models.ForeignKey(MessageForm, on_delete=models.CASCADE)
 
 '''
 Student and prof - same class extended from django user

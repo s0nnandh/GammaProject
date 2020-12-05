@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Person
 from .models import Group
-from phaseone.models import MessageForm
+from .models import MessageForm
 
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:

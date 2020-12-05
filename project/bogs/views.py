@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Person,Group,Membership,MessageForm,TempForm,Messageship
+from .models import Person,Group,Membership,MessageForm,Messageship
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,8 +9,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from .forms import SimpleForm
 from django.utils import timezone
-from phaseone.models import MessageForm 
-
+from phaseone.forms import TempForm
 def manage(request,ide):
     if not request.user.is_authenticated:
         return redirect('/login')
