@@ -86,32 +86,26 @@ def home(request):
     return render(request,'home.html',{'courses':a,'msg':msg}) 
 
 class PersonList(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated,]
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
 
 
 class PersonDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated,]
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
 
 class GroupList(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, ]
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
 class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, ]
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
 class MessageList(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, ]
     queryset = MessageForm.objects.all()
     serializer_class = MessageSerializer
 
 class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, ]
     queryset = MessageForm.objects.all()
     serializer_class = MessageSerializer

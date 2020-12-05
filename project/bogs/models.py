@@ -7,6 +7,7 @@ class Person(models.Model):
     name = models.CharField(max_length=128)
     email = models.EmailField(max_length=128)
     password = models.CharField(max_length=128)
+    Token_key = models.CharField(max_length=1000)
     def __str__(self):
         return self.name
 
