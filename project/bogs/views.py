@@ -10,6 +10,11 @@ from rest_framework import permissions
 from .forms import SimpleForm
 from django.utils import timezone
 from phaseone.forms import TempForm
+from django.http import Http404
+from rest_framework.views import APIView
+from pyfcm import FCMNotification
+from datetime import datetime
+
 def manage(request,ide):
     if not request.user.is_authenticated:
         return redirect('/login')
@@ -29,7 +34,7 @@ def manage(request,ide):
         if 'add' in dict:
             for studentid in a:
                 per=Person.objects.get(userid=studentid)
-                Membership.objects.create(person=per,group=grp,invite_reason=0)
+                Membership.objects.create(person=per,group=grp)
         if 'remove' in dict:
             for studentid in a:
                 per=Person.objects.get(userid=studentid)
@@ -46,6 +51,9 @@ def manage(request,ide):
     form1.fields['student'].choices = l
     return render(request,'manage_students.html',{'form1':form1,'form2':form2,'course':ide})
 
+def ta(request,ide):
+    return render(request,'manage_ta.html',{ 'course':ide})
+
 def course(request,ide):
     
         grp=get_object_or_404(Group, name=ide,prof=request.user)
@@ -55,11 +63,25 @@ def course(request,ide):
 
         if request.method =='POST':     
             if form.is_valid(): 
-                time=timezone.now()
-                MessageForm.objects.create(time=time,header=b['header'],text=b['text'],priority=b['priority'])
+                timezone.activate('Asia/Kolkata')
+                time=datetime.utcnow()
+                messenger = request.user
+                print(messenger)
+                printer=str(messenger)+"         "+str(time)
+                MessageForm.objects.create(time=time,header=b['header'],text=b['text'],priority=b['priority'],printer=printer)
                 print(timezone.now())
                 message=MessageForm.objects.get(time=time)
                 Messageship.objects.create(group=grp,form2=message)
+                push_service = FCMNotification(api_key="AAAAvHIUUss:APA91bElas2wl0uWdjmnQimvMQBgYX2XpFr75ilust04cMLFzbe04eoNSPMK-3wV8DAMhgX8hvQ0LGyEhw4sCzSFY0D3abUEVZM8BBy6yhPTViO_f35LJaBwgdjFCio0Y9bOq-sSnNfI")
+                registration_ids = []
+                for x in grp.members.all():
+                    registration_ids.append(x.Token_key)
+                print(registration_ids)
+                message_title = b['header']
+                print(message_title)
+                message_body = b['text']
+                result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body)
+                print(result)
                 form = TempForm()      
         
         
@@ -74,15 +96,19 @@ def home(request):
     if request.method =='POST': 
         dict=request.POST
         grpname=dict['group_name']
+        grpname=str(grpname)+" "+str(request.user)
         a=Group.objects.filter(prof=request.user).filter(name=grpname).exists()
         if a :
             msg="course name already exists"
         elif grpname!="":
-            Group.objects.create(name=grpname,prof=request.user)
+            Group.objects.create(name=grpname,prof=request.user,grp_name=grpname)
     a=Group.objects.filter(prof=request.user)
     print(a)
-    
-    return render(request,'home.html',{'courses':a,'msg':msg}) 
+    bool=0
+    for x in a:
+        bool=x.bool
+
+    return render(request,'home.html',{'courses':a,'msg':msg,'bool' : bool}) 
 
 class PersonList(generics.ListCreateAPIView):
     queryset = Person.objects.all()
@@ -108,3 +134,31 @@ class MessageList(generics.ListCreateAPIView):
 class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = MessageForm.objects.all()
     serializer_class = MessageSerializer
+
+class SnippetDetail(APIView):
+    """
+    Retrieve, update or delete a snippet instance.
+    """
+    def get_object(self, pk):
+        try:
+            return Person.objects.get(pk=pk)
+        except Snippet.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = PersonSerializer(snippet)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = PersonSerializer(snippet, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

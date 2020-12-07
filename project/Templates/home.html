@@ -13,6 +13,8 @@
 {% endfor %} 
 </div> 
 <br><br><br>
+{% if bool %}
+
 <h3>create a new course</h3>
 <form method="post" enctype="multipart/form-data">
 	{% csrf_token %} 
@@ -22,5 +24,7 @@
 <br>
 <h4>{{ msg }}</h4>
 <br><br>
+{% endif %}
+
 <p>goodbye, {{ user.username }}. <a href="/logout"> log out</a>.</p>
 {% endblock %}

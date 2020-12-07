@@ -6,7 +6,7 @@ from .models import MessageForm
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ['name','userid','email','password','group_set']
+        fields = ['name','userid','email','password','Token_key','group_set']
 
 
 class GroupSerializer(serializers.ModelSerializer):

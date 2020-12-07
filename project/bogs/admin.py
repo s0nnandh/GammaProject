@@ -4,5 +4,5 @@ from .models import Person,Group,Membership,Messageship,MessageForm
 admin.site.register(Group)
 admin.site.register(Person)
 admin.site.register(Membership)
-admin.site.register(Messageship)
 admin.site.register(MessageForm)
+admin.site.register(Messageship)
