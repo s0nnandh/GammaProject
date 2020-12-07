@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='blank'),
+    path('mess/',views.MessList.as_view(),name='messlist'),
+    path('mess/<str:pk>/',views.MessDetail.as_view(),name='messinfo'),
     path('messages/<str:pk>/',views.MessageDetail.as_view(),name='messageinfo'),
     path('groups/',views.GroupList.as_view(),name='group_list'),
     path('groups/<str:pk>/',views.GroupDetail.as_view(),name = 'groupinfo'),    

@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect
-from .models import Person,Group,Membership,MessageForm,Messageship
+from .models import Person,Group,Membership,MessageForm,Messageship,Message_seen
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import PersonSerializer,GroupSerializer,MessageSerializer
+from .serializers import PersonSerializer,GroupSerializer,MessageSerializer,Mess
 from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
@@ -162,3 +162,12 @@ class SnippetDetail(APIView):
         snippet = self.get_object(pk)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class MessList(generics.ListCreateAPIView):
+    queryset = Message_seen.objects.all()
+    serializer_class = Mess
+
+class MessDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Message_seen.objects.all()
+    serializer_class = Mess

@@ -20,6 +20,7 @@ class MessageForm(models.Model):
     header = models.CharField(max_length = 100)
     text = models.TextField()
     time = models.DateTimeField(auto_now=False)
+    seen = models.ManyToManyField(Person,through='Message_seen')
     def __str__(self):
         return self.header
 
@@ -41,4 +42,16 @@ class Membership(models.Model):
 class Messageship(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     form2 = models.ForeignKey(MessageForm, on_delete=models.CASCADE)
+
+
+class Message_seen(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    form2 = models.ForeignKey(MessageForm, on_delete=models.CASCADE)
+
+'''
+Student and prof - same class extended from django user
+user_type = ['prof', 'stud']
+
+login API endpoint takes 'username', 'password', 'platform'
+'''
 
