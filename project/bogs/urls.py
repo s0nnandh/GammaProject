@@ -14,5 +14,7 @@ urlpatterns = [
     path('<str:ide>', views.course, name='course'),
     path('<str:ide>/manage', views.manage, name='manage students'),
     path('<str:ide>/manage/TA', views.ta, name='manage TA'),
+    path('<str:ide>/seen/<str:msg>', views.seen, name='seen'),
+
 ]
  

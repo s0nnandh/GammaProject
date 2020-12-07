@@ -148,7 +148,10 @@ def course(request,ide):
             messages=grp.messages.all()
         return render(request,'courses.html',{ 'course' : ide , 'messages' : messages ,'form':form,'bool':bool})
 def seen(request,ide,msg):
-    return render(request,'seen.html')
+    a=MessageForm.objects.get(printer=msg)
+    seen = a.seen.all()
+    print(seen)
+    return render(request,'seen.html',{'seen':seen})
 
 def home(request):
     if not request.user.is_authenticated:
