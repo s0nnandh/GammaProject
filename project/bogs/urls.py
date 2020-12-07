@@ -13,5 +13,6 @@ urlpatterns = [
     path('persons/<str:pk>/', views.PersonDetail.as_view(),name='personinfo'),
     path('<str:ide>', views.course, name='course'),
     path('<str:ide>/manage', views.manage, name='manage students'),
-    path('<str:ide>/manage/TA', views.ta, name='manage students'),
+    path('<str:ide>/manage/TA', views.ta, name='manage TA'),
 ]
+ 

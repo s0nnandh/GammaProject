@@ -27,8 +27,9 @@
     
 {% endfor %} 
 </ul>
+{% if bool %}
 
 <h6 align="right">manage students for {{ course }}
     <a href= "{{ course }}/manage" > here</a></h6> <br><br>
-
+{% endif %}
 {% endblock %}

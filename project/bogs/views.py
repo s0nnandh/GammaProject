@@ -14,10 +14,12 @@ from django.http import Http404
 from rest_framework.views import APIView
 from pyfcm import FCMNotification
 from datetime import datetime
+from django.contrib.auth.models import User
 
 def manage(request,ide):
     if not request.user.is_authenticated:
         return redirect('/login')
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     profname=request.user
     form1 = SimpleForm()
     form2 = SimpleForm()
@@ -34,7 +36,10 @@ def manage(request,ide):
         if 'add' in dict:
             for studentid in a:
                 per=Person.objects.get(userid=studentid)
-                Membership.objects.create(person=per,group=grp)
+                if grp.members.all().filter(userid=studentid).exists() :
+                    print("exists")
+                else :
+                    Membership.objects.create(person=per,group=grp)
         if 'remove' in dict:
             for studentid in a:
                 per=Person.objects.get(userid=studentid)
@@ -44,24 +49,70 @@ def manage(request,ide):
     members=grp.members.all()
     for x in a:
         if x not in members:
-            l2.append((x.userid,x.name))
+            l2.append((x.userid,str(x.userid)+"         "+str(x.name)))
     form2.fields['student'].choices = l2
     for x in members:
-        l.append((x.userid,x.name))
+            l.append((x.userid,str(x.userid)+"     "+str(x.name)))
     form1.fields['student'].choices = l
     return render(request,'manage_students.html',{'form1':form1,'form2':form2,'course':ide})
 
 def ta(request,ide):
-    return render(request,'manage_ta.html',{ 'course':ide})
+    if not request.user.is_authenticated:
+        return redirect('/login')
+    print("********************************************")
+    profname=request.user
+    form1 = SimpleForm()
+    form2 = SimpleForm()
+    l = []
+    l2=[]
+    grp=get_object_or_404(Group, name=ide)
+    
+    if request.method =='POST': 
+        dict=request.POST
+        print(dict)
+        a=dict.getlist('student')
+        if 'add' in dict:
+            for studentid in a:
+                per=Person.objects.get(userid=studentid)
+                name=str(ide)+str(per.userid)
+                Group.objects.create(bool=0,prof=studentid,grp_name=ide,name=name)
+                if User.objects.filter(username=studentid).exists():
+                    print("exists1")
+                else :
+                    User.objects.create_user(studentid, per.email, per.password)
+        if 'remove' in dict:
+            for studentid in a:
+                Group.objects.filter(grp_name=ide,prof=studentid).delete()
+                
+
+    a=Person.objects.all()
+    l=[]
+    l2=[]
+    for x in a:
+        l2.append((x.userid,x.name))
+    form2.fields['student'].choices = l2
+
+    for x in Group.objects.filter(grp_name=ide):
+        if Person.objects.filter(userid=x.prof).exists():
+            per=Person.objects.get(userid=x.prof)
+            print(per)
+            l.append((per.userid,per.name))
+
+    form1.fields['student'].choices = l
+
+    return render(request,'manage_ta.html',{'form1':form1,'form2':form2,'course':ide})
 
 def course(request,ide):
     
-        grp=get_object_or_404(Group, name=ide,prof=request.user)
+        grp=get_object_or_404(Group, grp_name=ide,prof=request.user)
+        
         b=request.POST
+        print(b)
         form = TempForm(request.POST or None, request.FILES or None)
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
 
-        if request.method =='POST':     
+        if request.method =='POST': 
+
             if form.is_valid(): 
                 timezone.activate('Asia/Kolkata')
                 time=datetime.utcnow()
@@ -70,12 +121,16 @@ def course(request,ide):
                 printer=str(messenger)+"         "+str(time)
                 MessageForm.objects.create(time=time,header=b['header'],text=b['text'],priority=b['priority'],printer=printer)
                 print(timezone.now())
-                message=MessageForm.objects.get(time=time)
-                Messageship.objects.create(group=grp,form2=message)
+
+                message=MessageForm.objects.get(printer=printer)
+                x = Group.objects.get(name=ide)
+                Messageship.objects.create(group=x,form2=message)
+
                 push_service = FCMNotification(api_key="AAAAvHIUUss:APA91bElas2wl0uWdjmnQimvMQBgYX2XpFr75ilust04cMLFzbe04eoNSPMK-3wV8DAMhgX8hvQ0LGyEhw4sCzSFY0D3abUEVZM8BBy6yhPTViO_f35LJaBwgdjFCio0Y9bOq-sSnNfI")
                 registration_ids = []
                 for x in grp.members.all():
-                    registration_ids.append(x.Token_key)
+                    if x.Token_key != 0 :
+                        registration_ids.append(x.Token_key)
                 print(registration_ids)
                 message_title = b['header']
                 print(message_title)
@@ -85,9 +140,15 @@ def course(request,ide):
                 form = TempForm()      
         
         
-        messages = grp.messages.all()
-        
-        return render(request,'courses.html',{ 'course' : ide , 'messages' : messages ,'form':form})
+        bool = grp.bool
+        if bool :
+            messages= grp.messages.all()
+        else :
+            grp = Group.objects.get(name=ide)
+            messages=grp.messages.all()
+        return render(request,'courses.html',{ 'course' : ide , 'messages' : messages ,'form':form,'bool':bool})
+def seen(request,ide,msg):
+    return render(request,'seen.html')
 
 def home(request):
     if not request.user.is_authenticated:
