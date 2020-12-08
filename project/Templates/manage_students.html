@@ -8,10 +8,12 @@
 <h6 align="left"><a href="/blog" style="color: rgb(226, 17, 70);" >Mainmenu</a></h6>
 <h6 align="left"><a href="/blog/{{course }}" style="color: rgb(175, 101, 169);" >Back to course</a></h6>
 <p>Hey, {{ user.username }}. Add or Remove student for {{ course }} course.</p>
+Manage TA <a  href= "manage/TA">here</a>
+
 <form method="post" enctype="multipart/form-data"> 
     {% csrf_token %} 
 <br>
-    {{ form1 | crispy }} 
+    {{ form1 }} 
     <br>
     <input type="submit" name="remove" value="remove" />
 
@@ -19,9 +21,8 @@
 <br><br>
 <form method="post" enctype="multipart/form-data"> 
     {% csrf_token %} 
-    <input type="submit" name="add" value="add" /><br>
 	{{ form2 }} 
-	
+    <input type="submit" name="add" value="add" /><br>
+
 </form> 
- Manage TA <a  href= "manage/TA">here</a>
 {% endblock %}

@@ -25,37 +25,40 @@ def manage(request,ide):
     form2 = SimpleForm()
     l = []
     l2=[]
-    grp=get_object_or_404(Group, name=ide,prof=request.user)
+    grp1=Group.objects.filter(grp_name=ide,prof=request.user).exists()
+    if grp1:
+        grp=Group.objects.get(grp_name=ide,prof=request.user)
+    else:
+        return redirect('/blog')
+    if grp.bool == 1 :
+        if request.method =='POST': 
+            dict=request.POST
+            print(dict)
+            a=dict.getlist('student')
+            if 'add' in dict:
+                for studentid in a:
+                    per=Person.objects.get(userid=studentid)
+                    if grp.members.all().filter(userid=studentid).exists() :
+                        print("exists")
+                    else :
+                        Membership.objects.create(person=per,group=grp)
+            if 'remove' in dict:
+                for studentid in a:
+                    per=Person.objects.get(userid=studentid)
+                    grp.members.remove(per)
 
-
-    
-    if request.method =='POST': 
-        dict=request.POST
-        print(dict)
-        a=dict.getlist('student')
-        if 'add' in dict:
-            for studentid in a:
-                per=Person.objects.get(userid=studentid)
-                if grp.members.all().filter(userid=studentid).exists() :
-                    print("exists")
-                else :
-                    Membership.objects.create(person=per,group=grp)
-        if 'remove' in dict:
-            for studentid in a:
-                per=Person.objects.get(userid=studentid)
-                grp.members.remove(per)
-
-    a=Person.objects.all()
-    members=grp.members.all()
-    for x in a:
-        if x not in members:
-            l2.append((x.userid,str(x.userid)+"         "+str(x.name)))
-    form2.fields['student'].choices = l2
-    for x in members:
-            l.append((x.userid,str(x.userid)+"     "+str(x.name)))
-    form1.fields['student'].choices = l
-    return render(request,'manage_students.html',{'form1':form1,'form2':form2,'course':ide})
-
+        a=Person.objects.all()
+        members=grp.members.all()
+        for x in a:
+            if x not in members:
+                l2.append((x.userid,str(x.userid)+"         "+str(x.name)))
+        form2.fields['student'].choices = l2
+        for x in members:
+                l.append((x.userid,str(x.userid)+"     "+str(x.name)))
+        form1.fields['student'].choices = l
+        return render(request,'manage_students.html',{'form1':form1,'form2':form2,'course':ide})
+    else :
+        return render(request,'manager.html')
 def ta(request,ide):
     if not request.user.is_authenticated:
         return redirect('/login')
@@ -65,46 +68,60 @@ def ta(request,ide):
     form2 = SimpleForm()
     l = []
     l2=[]
-    grp=get_object_or_404(Group, name=ide)
-    
-    if request.method =='POST': 
-        dict=request.POST
-        print(dict)
-        a=dict.getlist('student')
-        if 'add' in dict:
-            for studentid in a:
-                per=Person.objects.get(userid=studentid)
-                name=str(ide)+str(per.userid)
-                Group.objects.create(bool=0,prof=studentid,grp_name=ide,name=name)
-                if User.objects.filter(username=studentid).exists():
-                    print("exists1")
-                else :
-                    User.objects.create_user(studentid, per.email, per.password)
-        if 'remove' in dict:
-            for studentid in a:
-                Group.objects.filter(grp_name=ide,prof=studentid).delete()
-                
+    grp1=Group.objects.filter(grp_name=ide,prof=request.user).exists()
+    if grp1:
+        grp=Group.objects.get(grp_name=ide,prof=request.user)
+    else:
+        return redirect('/blog')
+    if grp.bool == 1 :
+        if request.method =='POST': 
+            dict=request.POST
+            print(dict)
+            a=dict.getlist('student')
+            if 'add' in dict:
+                for studentid in a:
+                    per=Person.objects.get(userid=studentid)
+                    name=str(ide)+str(per.userid)
+                    if Group.objects.filter(grp_name=ide,prof=per.userid).exists() :
+                        print("exists")
+                    else:
+                         Group.objects.create(bool=0,prof=studentid,grp_name=ide,name=name)
+                    if User.objects.filter(username=studentid).exists():
+                        print("exists1")
+                    else :
+                        User.objects.create_user(studentid, per.email, per.password)
+            if 'remove' in dict:
+                for studentid in a:
+                    Group.objects.filter(grp_name=ide,prof=studentid).delete()
+                    
 
-    a=Person.objects.all()
-    l=[]
-    l2=[]
-    for x in a:
-        l2.append((x.userid,x.name))
-    form2.fields['student'].choices = l2
+        a=Person.objects.all()
+        l=[]
+        l2=[]
+        for x in a:
+            l2.append((x.userid,str(x.userid)+"         "+str(x.name)))
+        form2.fields['student'].choices = l2
 
-    for x in Group.objects.filter(grp_name=ide):
-        if Person.objects.filter(userid=x.prof).exists():
-            per=Person.objects.get(userid=x.prof)
-            print(per)
-            l.append((per.userid,per.name))
+        for x in Group.objects.filter(grp_name=ide):
+            if Person.objects.filter(userid=x.prof).exists():
+                per=Person.objects.get(userid=x.prof)
+                print(per)
+                l.append((per.userid,str(per.userid)+"         "+str(per.name)))
 
-    form1.fields['student'].choices = l
+        form1.fields['student'].choices = l
 
-    return render(request,'manage_ta.html',{'form1':form1,'form2':form2,'course':ide})
+        return render(request,'manage_ta.html',{'form1':form1,'form2':form2,'course':ide})
+    else :
+        return render(request,'manager.html')
 
 def course(request,ide):
-    
-        grp=get_object_or_404(Group, grp_name=ide,prof=request.user)
+        if not request.user.is_authenticated:
+            return redirect('/login')
+        grp1=Group.objects.filter(grp_name=ide,prof=request.user).exists()
+        if grp1:
+            grp=Group.objects.get(grp_name=ide,prof=request.user)
+        else:
+          return redirect('/blog')
         
         b=request.POST
         print(b)
@@ -148,6 +165,17 @@ def course(request,ide):
             messages=grp.messages.all()
         return render(request,'courses.html',{ 'course' : ide , 'messages' : messages ,'form':form,'bool':bool})
 def seen(request,ide,msg):
+    if not request.user.is_authenticated:
+        return redirect('/login')
+    grp1=Group.objects.filter(grp_name=ide,prof=request.user).exists()
+    if grp1:
+        a1=Group.objects.get(grp_name=ide,prof=request.user).messages.filter(printer=msg).exists()
+        if a1 :
+             a=MessageForm.objects.get(printer=msg)
+        else :
+            return redirect('/blog')      
+    else:
+        return redirect('/blog')
     a=MessageForm.objects.get(printer=msg)
     seen = a.seen.all()
     print(seen)
