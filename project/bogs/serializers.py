@@ -6,7 +6,7 @@ from .models import MessageForm,Message_seen
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ['name','userid','email','password','Token_key','group_set']
+        fields = ['name','userid','email','password','Token_key','group_set','primary']
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -23,3 +23,8 @@ class Mess(serializers.ModelSerializer):
     class Meta:
         model = Message_seen
         fields = '__all__'
+
+class newPerson(serializers.ModelSerializer):
+    class Meta:
+        model = Person
+        fields = ['userid','password']

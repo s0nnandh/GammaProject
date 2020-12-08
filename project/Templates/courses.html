@@ -1,20 +1,60 @@
 {% extends 'base.html' %}
 
-
+{% load crispy_forms_tags %}
 {% block content %}
-<h1>course Page</h1>
-<h6 align ="right"><a href="/logout">logout</a></h6>
-<h6 align="left"><a href="/" style="color: rgb(226, 17, 70);" >Mainmenu</a></h6>
+
+<h1>Course Page</h1>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
+        
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      
+      <li class="nav-item">
+        <a href="/"  class="nav-link">Back to Mainpage</a>
+      </li>
+
+      
+
+      
+
+      <li class="nav-item">
+        <a href="/logout" class="nav-link">Logout</a>
+      </li>
+
+      </ul>
+  </div>
+  </nav>
+
+
+<br>
 <h2>Hey, {{ user.username }}. your {{ course }} main page.</h2>
-<br><br>
+<br>
+{% if bool %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+    <a href= "{{ course }}/manage" class="btn btn-outline-success my-2 my-sm-0">Manage students for {{ course }}</a>
+</div>
+    </div>
 
+    </div>
+    <br>
+{% endif %}
 
+<h2>Send Message to students</h2>
 
 <form method="post" enctype="multipart/form-data"> 
     {% csrf_token %} 
-    {{ form }} 
-    <button type="submit" class="btn btn-success">Submit</button> 
+    {{ form|crispy }} 
+    <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Send Message</button> 
 </form> 
+
+<br> 
 
 <ul>
 {% for message in messages %} 
@@ -22,15 +62,18 @@
         <ul>
             <li>{{ message.text }}</li>
             <li>{{ message.time }}</li>
+            
             <h6 align ="right"><a href="{{ course }}/seen/{{ message.printer }}">seen</a></h6>
+            {% if bool %}
+            <form method="post" enctype="multipart/form-data"> 
+                {% csrf_token %} 
+            <h6 align="right"><button type="submit" name="delete" value="{{ message.printer}}" width='500px'>delete</button></h6><br>
+            </form>
+            {% endif %}
         </ul>
     </li> 
     
 {% endfor %} 
 </ul>
-{% if bool %}
 
-<h6 align="right">manage students for {{ course }}
-    <a href= "{{ course }}/manage" > here</a></h6> <br><br>
-{% endif %}
 {% endblock %}

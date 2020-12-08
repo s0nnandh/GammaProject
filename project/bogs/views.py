@@ -98,6 +98,7 @@ def ta(request,ide):
         a=Person.objects.all()
         l=[]
         l2=[]
+        
         for x in a:
             l2.append((x.userid,str(x.userid)+"         "+str(x.name)))
         form2.fields['student'].choices = l2
@@ -117,6 +118,8 @@ def ta(request,ide):
 def course(request,ide):
         if not request.user.is_authenticated:
             return redirect('/login')
+       
+
         grp1=Group.objects.filter(grp_name=ide,prof=request.user).exists()
         if grp1:
             grp=Group.objects.get(grp_name=ide,prof=request.user)
@@ -129,33 +132,34 @@ def course(request,ide):
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
 
         if request.method =='POST': 
+            if "delete" in b:
+                MessageForm.objects.get(printer=b['delete']).delete()
+            else:
+                if form.is_valid(): 
+                    timezone.activate('Asia/Kolkata')
+                    time=datetime.utcnow()
+                    messenger = request.user
+                    print(messenger)
+                    printer=str(messenger)+"         "+str(time)
+                    MessageForm.objects.create(time=time,header=b['header'],text=b['text'],priority=b['priority'],printer=printer)
+                    print(timezone.now())
 
-            if form.is_valid(): 
-                timezone.activate('Asia/Kolkata')
-                time=datetime.utcnow()
-                messenger = request.user
-                print(messenger)
-                printer=str(messenger)+"         "+str(time)
-                MessageForm.objects.create(time=time,header=b['header'],text=b['text'],priority=b['priority'],printer=printer)
-                print(timezone.now())
+                    message=MessageForm.objects.get(printer=printer)
+                    x = Group.objects.get(name=ide)
+                    Messageship.objects.create(group=x,form2=message)
 
-                message=MessageForm.objects.get(printer=printer)
-                x = Group.objects.get(name=ide)
-                Messageship.objects.create(group=x,form2=message)
-
-                push_service = FCMNotification(api_key="AAAAvHIUUss:APA91bElas2wl0uWdjmnQimvMQBgYX2XpFr75ilust04cMLFzbe04eoNSPMK-3wV8DAMhgX8hvQ0LGyEhw4sCzSFY0D3abUEVZM8BBy6yhPTViO_f35LJaBwgdjFCio0Y9bOq-sSnNfI")
-                registration_ids = []
-                for x in grp.members.all():
-                    if x.Token_key != 0 :
-                        registration_ids.append(x.Token_key)
-                print(registration_ids)
-                message_title = b['header']
-                print(message_title)
-                message_body = b['text']
-                result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body)
-                print(result)
-                form = TempForm()      
-        
+                    push_service = FCMNotification(api_key="AAAAff-npZk:APA91bEYHRssroImVg-vG_RlUrRyn-bSps85URjpiNBNcYpJ4ijjSlnsc1NmmftqO1G0pp_TbCS07PGXL5Fx7vDC2uttICAUeCE_bwB_r5aHuH3wwWcmZQxgoekbbX9JPO3hXlnWKW_X")
+                    registration_ids = []
+                    for x in grp.members.all():
+                        if x.Token_key != 0 :
+                            registration_ids.append(x.Token_key)
+                    print(registration_ids)
+                    message_title = b['header']
+                    print(message_title)
+                    message_body = b['text']
+                    result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body)
+                    print(result)
+                    form = TempForm()      
         
         bool = grp.bool
         if bool :
@@ -169,7 +173,7 @@ def seen(request,ide,msg):
         return redirect('/login')
     grp1=Group.objects.filter(grp_name=ide,prof=request.user).exists()
     if grp1:
-        a1=Group.objects.get(grp_name=ide,prof=request.user).messages.filter(printer=msg).exists()
+        a1=Group.objects.get(name=ide).messages.filter(printer=msg).exists()
         if a1 :
              a=MessageForm.objects.get(printer=msg)
         else :

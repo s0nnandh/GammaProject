@@ -4,23 +4,51 @@
 
 {% block content %}
 <h1>manage TA Page</h1>
-<h6 align="right"><a href="/logout">logout</a></h6>
-<h6 align="left"><a href="/blog" style="color: rgb(226, 17, 70);" >Mainmenu</a></h6>
-<h6 align="left"><a href="/blog/{{course }}" style="color: rgb(175, 101, 169);" >Back to course</a></h6>
-<p>Hey, {{ user.username }}. Add or Remove student for {{ course }} course.</p>
+<h1>Manage students Page</h1>
+<br>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
+        
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      
+      <li class="nav-item">
+        <a href="/blog"  class="nav-link">Back to Mainpage</a>
+      </li>
+           
+      <li class="nav-item">
+        <a href="/blog/{{course }}" class="nav-link" >Back to course</a>
+      </li>
+      
+
+      <li class="nav-item">
+        <a href="/logout" class="nav-link">Logout</a>
+      </li>
+
+      </ul>
+  </div>
+  </nav>
+  <br>
+
+
+<h3>Hey, {{ user.username }}. Add or Remove TA for {{ course }} course.</h3>
+<br>
 <form method="post" enctype="multipart/form-data"> 
     {% csrf_token %} 
 <br>
-    {{ form1  }} 
+    {{ form1 | crispy }} 
     <br>
-    <input type="submit" name="remove" value="remove" />
-
+    <input type="submit" name="remove" value="remove" class="btn btn-success"/>
+    
 </form> 
 <br><br>
+<h3>All students</h3>
 <form method="post" enctype="multipart/form-data"> 
     {% csrf_token %} 
-	{{ form2 }} 
-    <input type="submit" name="add" value="add" /><br>
-
+    <input type="submit" name="add" value="add" class="btn btn-success"/><br>
+	{{ form2|crispy }} 
+	
 </form> 
 {% endblock %}
