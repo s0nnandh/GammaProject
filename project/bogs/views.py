@@ -151,13 +151,18 @@ def course(request,ide):
                     push_service = FCMNotification(api_key="AAAAff-npZk:APA91bEYHRssroImVg-vG_RlUrRyn-bSps85URjpiNBNcYpJ4ijjSlnsc1NmmftqO1G0pp_TbCS07PGXL5Fx7vDC2uttICAUeCE_bwB_r5aHuH3wwWcmZQxgoekbbX9JPO3hXlnWKW_X")
                     registration_ids = []
                     for x in grp.members.all():
-                        if x.Token_key != 0 :
+                        if x.Token_key != '0' :
                             registration_ids.append(x.Token_key)
                     print(registration_ids)
                     message_title = b['header']
                     print(message_title)
                     message_body = b['text']
-                    result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body)
+                    priority = b['priority']
+                    if (priority == '1' or priority == '2'):
+                        print(priority)
+                        result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body,sound="Default",content_available=True)
+                    else:
+                        result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body,sound="Default",low_priority=True)
                     print(result)
                     form = TempForm()      
         
@@ -230,34 +235,6 @@ class MessageList(generics.ListCreateAPIView):
 class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = MessageForm.objects.all()
     serializer_class = MessageSerializer
-
-class SnippetDetail(APIView):
-    """
-    Retrieve, update or delete a snippet instance.
-    """
-    def get_object(self, pk):
-        try:
-            return Person.objects.get(pk=pk)
-        except Snippet.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        serializer = PersonSerializer(snippet)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        serializer = PersonSerializer(snippet, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        snippet.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class MessList(generics.ListCreateAPIView):

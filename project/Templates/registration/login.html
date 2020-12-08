@@ -5,17 +5,25 @@
 {% block content %}
 
 
+<div class="container ">
+  <div class="col-md-12 text-center">
+    <h1>DashBoard</h1>
+  </div>
+</div>
+
+
+
 
   {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
+    <h3>Your username and password didn't match. Please try again.</h3>
   {% endif %}
   
   {% if next %}
     {% if user.is_authenticated %}
-      <p>Your account doesn't have access to this page. To proceed,
-      please login with an account that has access.</p>
+      <h3>Your account doesn't have access to this page. To proceed,
+      please login with an account that has access.</h3>
     {% else %}
-      <p>Please login to see this page.</p>
+      <h3>Please login to see this page.</h3>
     {% endif %}
   {% endif %}
   
@@ -23,12 +31,21 @@
     {% csrf_token %}
 
     {{ form|crispy }}
-    <button type="submit" class="btn btn-success">Login</button>
+    <div class="container ">
+      <div class="col-md-12 text-center">
+        <button type="submit" class="btn btn-success">Login</button>
+      </div>
+  </div>
+    
     <input type="hidden" name="next" value="{{ next }}" />
   </form>
+
+  <br>
   
   {# Assumes you setup the password_reset view in your URLconf #}
-  <div class="row">
-  <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-</div>
+  <div class="container ">
+    <div class="col-md-12 text-center">
+      <a href="{% url 'password_reset' %}">Forgot password?</a>
+    </div>
+
 {% endblock %}

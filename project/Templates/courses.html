@@ -3,7 +3,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<h1>Course Page</h1>
+
+<div class="container ">
+	<div class="col-md-12 text-center">
+		<h1>Course Page</h1>
+	</div>
+  </div>
 
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
@@ -51,23 +56,32 @@
 <form method="post" enctype="multipart/form-data"> 
     {% csrf_token %} 
     {{ form|crispy }} 
-    <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Send Message</button> 
+    <div class="container ">
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Send Message</button> 
+        </div>
+      </div>
+    
 </form> 
 
 <br> 
-
-<ul>
+<h3>Messages Sent</h3>
+<ul class="list-group">
 {% for message in messages %} 
-    <li>{{ message.header }}
-        <ul>
-            <li>{{ message.text }}</li>
-            <li>{{ message.time }}</li>
-            
-            <h6 align ="right"><a href="{{ course }}/seen/{{ message.printer }}">seen</a></h6>
+    <li class="list-group-item">{{ message.time }}
+        <ul class="list-group">
+            <li class="list-group-item">{{ message.header }}</li>
+            <br>
+            <li class="list-group-item">{{ message.text }}</li>
+            <br>
+            <div class="d-flex justify-content-end"><a class="btn btn-outline-success" href="{{ course }}/seen/{{ message.printer }}" >Acknowledged Students</a></div>
+                      
+          <br>
             {% if bool %}
             <form method="post" enctype="multipart/form-data"> 
                 {% csrf_token %} 
-            <h6 align="right"><button type="submit" name="delete" value="{{ message.printer}}" width='500px'>delete</button></h6><br>
+                <div class="d-flex justify-content-end"><button type="submit" name="delete" value="{{ message.printer}}" width='500px' class="btn btn-outline-danger">Delete Notification</button></div>
+            
             </form>
             {% endif %}
         </ul>

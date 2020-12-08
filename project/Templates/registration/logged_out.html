@@ -3,10 +3,12 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row">
-  <p>Logged out!</p> 
+<div class="container ">
+  <div class="col-md-12 text-center">
+    <h1>Logged Out Succesfully</h1>
+    <br>
+    <a href="/login/" class="btn btn-outline-success my-2 my-sm-0">Click here to login again.</a>
+  </div>
 </div>
-<div class="row"> 
-  <a href="/login/">Click here to login again.</a>
-</div>
+
 {% endblock %}
